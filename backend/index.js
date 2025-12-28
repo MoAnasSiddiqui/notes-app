@@ -3,7 +3,10 @@ require("dotenv").config();
 const config = require("./config.json");
 const mongoose = require("mongoose");
 
-mongoose.connect(config.connectionString)
+// Prefer MONGO_URI from environment for containerized deployments
+const mongoUri = process.env.MONGO_URI || config.connectionString;
+
+mongoose.connect(mongoUri)
 
 const User = require("./models/user.model")
 const Note = require("./models/note.model")
