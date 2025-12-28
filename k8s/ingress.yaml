@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: main-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      sub_filter '<base href="/">' '<base href="/dashboard/">';
+      sub_filter_once on;
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /dashboard(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: dashboard-proxy
+            port:
+              number: 80
+      - path: /()(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: notes-web-service
+            port:
+              number: 8000
